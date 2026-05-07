@@ -24,6 +24,20 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
   );
   
   if (!user) return <Navigate to="/login" />;
+  
+  // If user exists but profile check isn't complete (role is required for admin routes)
+  if (adminOnly && !profile) {
+    if (loading) {
+       return (
+        <div className="h-screen w-screen flex items-center justify-center bg-[#F8FAFC]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4F46E5]"></div>
+        </div>
+      );
+    }
+    // If loading is done but no profile, and it's an admin only route, redirect
+    return <Navigate to="/dashboard" />;
+  }
+  
   if (adminOnly && profile?.role !== 'admin') return <Navigate to="/dashboard" />;
   
   return <Layout>{children}</Layout>;
